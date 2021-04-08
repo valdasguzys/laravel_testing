@@ -5,18 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 
-class BooksController extends Controller
+class BooksController extends Controller 
 {
-    public function store() 
+    public function store()
     {
-        $data = request()->validate([ 'isbn' => 'required', 'title' => 'required' ]);
-        Book::create($data);
+        $book = Book::create($this->validateRequest());
+        return redirect('/books/' . $book->isbn);
     }
 
     public function update(Book $book)
     {
-        $data = request()->validate([ 'isbn' => 'required', 'title' => 'required' ]);
-        $book->update($data);
+        $book->update($this->validateRequest());
+        return redirect('/books/' . $book->isbn);
     }
 
+    public function destroy(Book $book)
+    {
+        $book->delete();
+        return redirect('/books');
+    }
+
+    private function validateRequest(){
+        return request()->validate([ 'isbn' => 'required', 'title' => 'required' ]);
+    }
 }
